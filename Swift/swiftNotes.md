@@ -110,6 +110,7 @@ myName = "T.P."
 
 print("myName")
 //outputs --> Swift throws an error saying that it cannot be mutated.
+```
 
 ## Swift Deep Dive #3
 
@@ -137,6 +138,38 @@ var computedNumbers = [
 print(computedNumbers)
 //outputs --> [3285, 14235, 10335, 2385]
 ```
+
+### 1D Arrays vs 2D Arrays
+
+- 1D Array: normal array were values are separated by commas placed inside a **single** array.
+
+```swift
+let quiz = [
+        "Four + Two is equal to Six.",
+        "Five - Three is greater than One.",
+        "Three + Eight is less than Ten."
+    ]
+
+//To access the values inside the array you use the following syntax: array[i]
+print(quiz[1])
+//outputs the second index
+```
+
+- 2D Array: these are nested arrays inside one array:
+
+```swift
+let numbers = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+]
+
+//To access certain values inside the array you use the following syntax: array[i][j]
+print(numbers[2][2])
+//outputs --> 9
+```
+
+**NOTE** 2D arrays symboled like this ```[[array]]```.
 
 ## Swift Deep Dive #4
 
@@ -487,6 +520,112 @@ if player1Username != nil{
 ```
 
 - **NOTE** Dictionaries always output optionals!
+
+## Structures, Methods, and Properties
+
+- **Remember** prebuilt - basic data types are "Strings", Int, Float, Double, Bool, Array, Dictionary
+
+### But what if we needed a custom data type?
+
+- Structures == Blueprints for objects in Swift where we can plan ahead of what it will be.  
+  - Structures are composed of properties and methods:
+    - **Properties** are variables created within the structure (What the structure will be like)
+    - **Methods** are functions created within the structure (What the structure can do)
+
+```swift
+//defining a Structures:
+//Names must be capitalized!
+struct MyStruct{}
+
+struct Town{
+    //defining properties
+    let name = "Taylorland"
+    var citizens = ["Taylor", "Carrie", "Em"]
+    var resources = ["Grain": 100, "Ore": 42, "Wool": 75]
+
+    //defining methods (functions inside a structure)
+    func fortify() {
+      print("Defences increased!")
+    }
+}
+
+//initializing a Structure:
+var myTown = Town()
+
+print(myTown.citizens) //--> Taylor, Carrie, Em
+print("\(myTown.name) has \(myTown.resources["Grain"]!) bags of grain.")
+
+//modifying a structure:
+myTown.citizens.append("Scout") //.append == adds to the array
+print(myTown.citizens.count) //.count == counts the items in an array
+
+//initializing a method
+myTown.fortify()
+
+//Using init() to create the blueprint of the Town struct so we can build unique structures from the blueprint.
+
+struct Town{
+    // default properties
+    var name = String()
+    var citizens = [String]()
+    var resources = [String: Int]()
+    
+    //init syntax for initializing the blueprint
+    init(name: String, citizens: [String], resources: [String: Int]) {
+        //self refers to the default properties
+        self.name = name
+        self.citizens = citizens
+        self.resources = resources
+    }
+    
+    func fortify() {
+      print("Defences increased!")
+    }
+}
+
+//defining a new town(s)
+var anotherTown = Town(name: "Valdosta", citizens: ["Honey", "Dennis"], resources: ["Cotton" : 37])
+anotherTown.citizens.append("JP")
+print(anotherTown.citizens)
+
+var ghostTown = Town(name: "Ghostville", citizens: [], resources: ["Tumbleweed": 1])
+ghostTown.fortify()
+
+//structure exercise:
+struct User {
+    var name: String
+    var email: String?
+    var followers: Int
+    var isActive: Bool
+  
+  init(name: String, email: String?, followers: Int, isActive: Bool) {
+    self.name = name
+    self.email = email
+    self.followers = followers
+    self.isActive = isActive
+  }
+  
+  func logStatus() {
+    if self.isActive == true {
+      print("\(self.name) is working hard!")
+    } else {
+      print("\(self.name) has left earth...")
+    }
+  }
+}
+
+var nixon = User(name: "Richard", email: "", followers: 0, isActive: false)
+print(user1)
+user1.logStatus()
+
+var musk = User(name: "Elon", email: "elon@tesla.com", followers: 2001, isActive: true)
+musk.logStatus()
+print("Contacting \(musk.name) on \(musk.email!) ...")
+print("\(musk.name) has \(musk.followers) followers")
+// sometime later
+musk.isActive = false
+musk.logStatus()
+```
 
 ## The 5 Step Approach to Solve Any Programming Problem
 

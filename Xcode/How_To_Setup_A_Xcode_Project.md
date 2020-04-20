@@ -1,6 +1,8 @@
-# How To Setup A Xcode Project
+# Notes for Xcode
 
-## Using Storyboard
+## How To Setup A Xcode Project
+
+### Using Storyboard
 
 - When setting up your project in Storyboard, make sure you set the **User Interface** as _Storyboard_.
 
@@ -8,7 +10,7 @@
 
 - For _Language_ choose Swift.
 
-## Xcode Walkthrough
+### Xcode Walkthrough
 
 - The landing page, after setting up a project, will land on the _General Tab_ in Xcode.
   - Here you can change the version of the app, what version of iOS you want, device for the app to run on, and device orientation.
@@ -28,7 +30,7 @@ Check out this [map of Xcode](https://cloud.netlifyusercontent.com/assets/344dbf
 
 Check out these [keyboad shortcuts](https://swifteducation.github.io/assets/pdfs/XcodeKeyboardShortcuts.pdf) to increase worktime.
 
-## How ImageView work
+### How ImageView work
 
 - When laying out images or objects on the app, keep in mind the grid of the phone.  The top left corner is where it starts on the screen of the phone as well as the image you put on your screen.  
   - For example: the top left corner of the iPhone is at 0, depending on the size of the phone, the x and y axis will be different.
@@ -37,7 +39,7 @@ Check out these [keyboad shortcuts](https://swifteducation.github.io/assets/pdfs
 
 Use this [guide](https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions) to find iPhone points and resolutions.
 
-## How To Simulate Your App
+### How To Simulate Your App
 
 - There are two ways to simulate your app with Xcode:
   
