@@ -344,6 +344,61 @@ func getMilk(bottles: Int) {
 getMilk(bottles: 2)
 ```
 
+### Functions with Outputs
+
+- Syntax:
+
+```swift
+//    Name     parameters   Return Arrow    Return Type
+func getMilk  (money: Int)       ->             Int {
+  let change = money - 2
+//Return Keyword   Return Value
+      return          change
+
+//Calling a function with outputs
+//variable with return value and output (function with argument).
+var change = getMilk(4)
+}
+```
+#### 3 Types of Functions
+
+```swift
+//Vainlla Function (no input / no output)
+func greeting1() {
+    print("Hello, Taylor!")
+}
+
+greeting1()
+
+//Function with input
+func greeting2(name: String) {
+    print("Welcome, \(name)! Here's your entry music.")
+}
+
+greeting2(name: "Taylor")
+
+//Function with output
+func checkingUserEntry(name: String) -> Bool {
+    if name == "Taylor" || name == "Carrie" || name == "Em" || name == "Scout" {
+        return true
+    } else {
+        return false
+    }
+}
+
+var userAccess =  checkingUserEntry(name: "Larry")
+
+func openDoor() {
+    if userAccess == true {
+        print("Come on in!")
+    } else {
+        print("Sorry, I don't know you...")
+    }
+}
+
+openDoor()
+```
+
 ### Creating DataTypes
 
 - Two ways to create variables with DataTypes in Swift:
@@ -521,11 +576,11 @@ if player1Username != nil{
 
 - **NOTE** Dictionaries always output optionals!
 
-## Structures, Methods, and Properties
+### Structures, Methods, and Properties
 
 - **Remember** prebuilt - basic data types are "Strings", Int, Float, Double, Bool, Array, Dictionary
 
-### But what if we needed a custom data type?
+#### But what if we needed a custom data type?
 
 - Structures == Blueprints for objects in Swift where we can plan ahead of what it will be.  
   - Structures are composed of properties and methods:
@@ -625,6 +680,342 @@ print("\(musk.name) has \(musk.followers) followers")
 // sometime later
 musk.isActive = false
 musk.logStatus()
+```
+
+## Deep Dive #9 Immutability
+
+- Remember: variables with the ```let``` keyword are immutable which means they cannot be changed.  If you wanted to modify a ```let``` keyword you would have to destroy the variable and re-construct it.
+  - Variable Keywords
+    - ```var``` == mutable (can change)
+    - ```let``` == immutable (cannot change) or != mutable
+
+Take for instance this code:
+
+```swift
+struct Town {
+  let name: String
+  var citizens: [String]
+  var resources: [String : Int]
+  
+  init(name: String, citizens: [String], resources: [String : Int]) {
+      self.name = name.uppercased()
+      self.citizens = citizens
+      self.resources = resources
+    }
+
+  mutating func harvestSnuggles() {
+// We use mutating here because in front of resources there is an understood
+// let = self.  which makes this variable immutable.  A workaround is to use
+// the keyword "mutating" to switch the keyword let to var which will make the
+// variable mutable. 
+      resources["Snuggles"] = 300
+    }
+}
+ 
+var myTown = Town(name: "Taylorville", citizens: ["Taylor", "Carrie", "Em"],resources: ["Hug": 100, "Kisses": 200, "Chocolate": 50])
+
+print("Hello people of \(myTown.name)! I am God...")
+
+myTown.citizens.append("Scout")
+print(myTown.citizens)
+
+myTown.harvestSnuggles()
+print(myTown.resources)
+```
+
+**Essentially**: There are two types of methods in a struct
+
+1. Play method = doesn't change anything about the struct
+
+```swift
+func battleCry() {
+  print("We must protect this town!")
+}
+```
+
+2. Mutating method = can change something about the struct
+
+```swift
+mutating func buidingAxes() {
+  resources["axes": 400]
+}
+```
+
+## Deep Dive #10 Classes
+
+- **Classes** are a lot like structs in that they build the blueprint for objects.
+
+- How to **define** a class?
+
+**NOTE** -  It is common convention to write classes on a separate file, and name that file the same as your class.
+
+```swift
+// Basic Example
+class MyClass { }
+
+// More appropriate Example
+class Enemy {
+    var health = 100
+    var attackStrength = 10
+    
+    func move() {
+        print("walk forwards.")
+    }
+    
+    func attack() {
+        print("Land a hit, does \(attackStrength) damage")
+    }
+}
+```
+
+-  How to **initialize** a class?
+
+**NOTE** - Initializing a class happens on the _main.swift_ file.
+
+```swift
+          // Initialized
+let skeleton = Enemy()
+print(skeleton.health)
+skeleton.move()
+skeleton.attack()
+
+let skeleton2 = Enemy()
+let skeleton3 = Enemy()
+```
+
+- Although you might think that **classes** are basically structs, think again. 
+  - The big difference between **classes** and structs is the **classes** ability to inherit from a **superclass**.
+- Think about the **superclass** like a parent.  The **superclass** will then "teach" what it knows the child or **subclass** where the **subclass** inherits all of the methods and properties of the **superclass**.
+  - Hence the idea of inheritance.
+
+```swift
+class MyClass: SuperClass { }
+
+// on Dragon.swift file:
+// declaring subclass Dragon of superclass Enemy
+class Dragon: Enemy {
+  // New variable only available to Dragon and it's subclasses.
+  var wingSpan = 2
+  // New func only available to Dragon and it's subclasses.  
+  func talk(speech: String) {
+        print("Says: \(speech)")
+  }
+// The function is from the superclass Enemy, but Dragon is overriding the
+// functionality to match Dragon's needs.
+  override func move() {
+        print("Fly forwards.")
+  }
+// This function is also from superclass Enemy, but Dragon wants to add to the
+// original function.  So, we must add super.nameOfFunctionFromSuperclass() to
+  override func attack() {
+      //This function will run first
+        super.attack()
+      //Then this one.
+        print("Spits fire, does 40 damage.")
+  }
+}
+
+// on main.swift file:
+// initializing the class
+let dragon = Dragon()
+dragon.wingSpan = 5
+dragon.attackStrength = 15
+print(dragon.wingSpan) //--> 15
+dragon.talk(speech: "My teeth are swords! My claws are spears! My wings are a hurricane!")
+// --> "Says: "My teeth are swords! My claws are spears! My wings are a hurricane!"
+dragon.attack()
+// Lands a hit and does 15 damage
+// Spits fire, does 40 damage.
+dragon.move()
+// Fly forward.
+```
+
+### Inheritance in UIKit
+
+- Following the superclass (most basic) to the subclass (most specific) -->
+  - **NSObject** - the most basic
+    - **UIResponder** - inherits from NSObject and has it's own capabilities
+      - **UIView** - inherits from NSObject and UIResponder
+        - **UIControl** - inherits from NSObject, UIResponder, UIView
+          - **UIButton** - inherits from NSObject, UIResponder, UIView, and UIControl
+
+### Differences between Classes and Structs
+
+1. One key major difference is classes have the ability to inherit properties and methods from a superclass.
+2. Another difference is in **structs** you do not have to ```init()``` for properties that are empty variables, however for **classes** you do.
+
+```swift
+//struct
+struct Enemy {
+    var health: Int
+    var attackStrength: Int
+ 
+    func attack() {
+        print("Landed strike with \(attackStrength) points.")
+    }
+}
+
+let skeleton1 = Enemy(health: 100, attackStrength: 10)
+skeleton1.attack() //-->Landed strike with 10 points.
+
+//class
+struct Enemy {
+  var health: Int
+  var attackStrength: Int
+
+  init (health: Int, attackStrength: Int) {
+    self.health = health
+    self.attackStrength = attackStrength
+  }
+
+  func attack() {
+    print("Landed strike with \(attackStrength) points.")
+  }
+}
+
+let skeleton1 = Enemy(health: 100, attackStrength: 10)
+skeleton1.attack() //-->Landed strike with 10 points.
+```
+
+3. **Classes** are passed by **reference** where **Structs** are passed by **value**; this makes **classes** more complex and more error prone.
+
+```swift
+//CLASSES ARE PASSED BY REFERENCE
+let skeleton1 = Enemy(health: 100, attackStrength: 10)
+// Essentially, this is NOT making a copy but another reference to skeleton1
+let skeleton2 = skeleton1
+
+skeleton1.takeDamage(amount: 15)
+
+print(skeleton2.health) //--> 90
+print(skeleton2.health) //--> 90
+
+//STRUCTS ARE NOT PASSED BY REFERENCE AND ARE COMPLETE COPIES OF EACH OTHER
+var skeleton1 = Enemy(health: 100, attackStrength: 10)
+let skeleton2 = skeleton1
+
+skeleton1.takeDamage(amount: 15)
+
+print(skeleton2.health) //--> 100
+print(skeleton1.health) //--> 85
+```
+
+### Choosing Between Structs and Classes
+
+| Structures | Classes |  
+| -- | -- |
+| ```struct MyStruct { }``` | ```class MyClass: SuperClass { }``` |
+| Immutable (Cannot manipulate) | Mutable |
+| Passed by Value (can copy the value (data)) | Passed by Reference (more than variable that points to the same object) |
+| Cannot inherit properties or methods | Inheritance = SubClasses can inherit properties and methods from SuperClasses |
+| By default, Apple suggests you use structures | Use Classes when you need Objective-C interoperability |
+| Use Structures along with protocols to adopt behavior by sharing implementations | Use Classes when you need to control the identity of the data you're modeling (**NEED Inheritance**) |
+
+**NOTE** - For more info check out these two documentation:
+[Apple Developer](https://developer.apple.com/documentation/swift/choosing_between_structures_and_classes#overview), and [Swift Documentation](https://docs.swift.org/swift-book/LanguageGuide/ClassesAndStructures.html)
+
+## Deep Dive #11 Optional Binding, Chaining, and the Nil Coalescing Operator
+
+### Using Optionals ?
+
+1. Force Unwrapping = ```optional!```
+   1. Force unwrapping **optionals** is the simplest way to use **optionals**, however it is also the error prone and takes a lot of concentration to keep tabs on where your **optionals** could return a _nil_ datatype. 
+      1. For example:
+
+```swift
+let myOptional: String? //Datatype = String? (optional)
+myOptional = "Taylor"
+
+//This will throw an error b/c text = String where myOptional = String?
+let text: String = myOptional
+
+//To get around this, you force unwrap the optional
+let text: String = myOptional!
+
+//However, if at any point the myOptional returns a nil datatype:
+myOptional = nil
+
+//Then the app will crash by force unwrapping the optional
+let text: String = myOptional!
+
+```
+
+2. Check for nil value = ```if optional != nil { optional! }```
+   1. A much safer way (and **VERY** commonly used out in the wild) to force unwrap optionals is by checking if the optional is nil **FIRST** then force unwrapping the optional.
+      1. For example:
+
+```swift
+let myOptional: String?
+myOptional = nil
+
+// We are going to check if the optional is nil before we force unwrap the optional
+if myOptional != nil {
+  // You must sill force wrap the optional with !
+  let text: String = myOptional!
+} else {
+  print("myOptional was found to be nil, so it was skipped.")
+}
+
+//Rather than crashing the app,
+//Output --> myOptional was found to be nil, so it was skipped.
+```
+
+3. Optional Binding = ```if let safeOptional = optional { safeOptional }```
+   1. Because checking for _nil_ value(s) are so common, Swift has built in functionality (aka optional binding) that helps you handle **optionals** with ```if let``` conditional.
+      1. For example:
+
+```swift
+let myOptional: String?
+myOptional = "Taylor"
+
+//Using optional binding to check for nil
+if let safeOptional = myOptional {
+  // notice how we didn't have to force unwrap the optional.
+  let text: String = safeOptional
+  print(text) //--> outputs Taylor
+  print(safeOptional)//--> Also outputs Taylor
+} else {
+  print("myOptional was found to be nil, so it was skipped.")
+}
+```
+
+4. Nil Coalescing Operator = ```optional ?? defaultValue```
+   1. What if we wanted to provide a default value where the **optional** is equal to _nil_? In this case we would use the nil coalescing operator ```??```.  This operator checks to see if the **optional** is _nil_ and if it is then sets the **optional** to the the defaultValue
+      1. For example:
+
+```swift
+let myOptional: String?
+myOptional = nil
+
+// this checks to see if the optional is nil, if isn't then myOptional will be set to text
+// if myOptional is set to nil, then it will set to the default value
+let text: String = myOptional ?? "I am the default value."
+print(text)
+//Output --> I am the default value.
+```
+
+5. Optional Chaining = ```optional?.property``` ```optional?.method()```
+   1. For instances when you want an optional ```struct``` or an optional ```class```, you must use optional chaining to check to see if the ```struct``` or ```class``` is nil prior to gaining access to the their properties or methods.
+      1. for example:
+
+```swift
+struct MyOptional {
+  var property = 123
+  func method() {
+    print("I am the struct's method")
+  }
+}
+
+// sets the variable to the struct
+let myOptional: MyOptional?
+
+// initializes the struct
+myOptional = MyOptional()
+
+// checks to see if the struct is nil, 
+// if not, then allows access to the struct's properties and methods. 
+print(myOptional?.property) //--> Optional(123)
+myOptional?.method() //--> I am the struct's method
 ```
 
 ## The 5 Step Approach to Solve Any Programming Problem
