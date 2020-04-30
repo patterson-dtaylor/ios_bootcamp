@@ -1,5 +1,60 @@
 # Getting Started With Swift
 
+- [Getting Started With Swift](#getting-started-with-swift)
+  - [In Xcode you want to use the ViewController.swift](#in-xcode-you-want-to-use-the-viewcontrollerswift)
+  - [Changing the Properties of an Element with Dot.Notation.](#changing-the-properties-of-an-element-with-dotnotation)
+  - [Detecting User Interactions](#detecting-user-interactions)
+  - [Swift Deep Dive #1](#swift-deep-dive-1)
+    - [Naming Conventions](#naming-conventions)
+    - [Commenting](#commenting)
+  - [Print Statement](#print-statement)
+  - [Swift Deep Dive #2](#swift-deep-dive-2)
+    - [Variables](#variables)
+    - [Constants](#constants)
+  - [Swift Deep Dive #3](#swift-deep-dive-3)
+    - [Arrays](#arrays)
+    - [1D Arrays vs 2D Arrays](#1d-arrays-vs-2d-arrays)
+  - [Swift Deep Dive #4](#swift-deep-dive-4)
+    - [Basic Data Types](#basic-data-types)
+    - [Randomization in Swift](#randomization-in-swift)
+    - [Range Operator](#range-operator)
+  - [Deep Dive #5 Functions and Scope](#deep-dive-5-functions-and-scope)
+    - [Functions](#functions)
+    - [Scope](#scope)
+    - [Functions with Inputs](#functions-with-inputs)
+    - [Functions with Outputs](#functions-with-outputs)
+      - [3 Types of Functions](#3-types-of-functions)
+    - [Creating DataTypes](#creating-datatypes)
+    - [Type Inference](#type-inference)
+    - [How to Find the DataType of a Variable?](#how-to-find-the-datatype-of-a-variable)
+  - [Deep Dive #6 Conditionals](#deep-dive-6-conditionals)
+    - [If / Else Statments](#if--else-statments)
+      - [Comparison Operators](#comparison-operators)
+      - [Logical Operators](#logical-operators)
+    - [Switch Statements](#switch-statements)
+      - [When to use a Switch Statement or If/Else Statement?](#when-to-use-a-switch-statement-or-ifelse-statement)
+  - [Deep Dive #7 Dictionaries](#deep-dive-7-dictionaries)
+  - [Deep Dive #8 Optionals](#deep-dive-8-optionals)
+    - [Structures, Methods, and Properties](#structures-methods-and-properties)
+      - [But what if we needed a custom data type?](#but-what-if-we-needed-a-custom-data-type)
+  - [Deep Dive #9 Immutability](#deep-dive-9-immutability)
+  - [Deep Dive #10 Classes](#deep-dive-10-classes)
+    - [Inheritance in UIKit](#inheritance-in-uikit)
+    - [Differences between Classes and Structs](#differences-between-classes-and-structs)
+    - [Choosing Between Structs and Classes](#choosing-between-structs-and-classes)
+  - [Deep Dive #11 Optional Binding, Chaining, and the Nil Coalescing Operator](#deep-dive-11-optional-binding-chaining-and-the-nil-coalescing-operator)
+    - [Using Optionals ?](#using-optionals-)
+  - [Swift Deep Dive #12 Protocols](#swift-deep-dive-12-protocols)
+  - [Swift Deep Dive #13 Closures](#swift-deep-dive-13-closures)
+  - [Swift Deep Dive #14 Parameter Names](#swift-deep-dive-14-parameter-names)
+  - [Swift Deep Dive #15 Extensions](#swift-deep-dive-15-extensions)
+  - [Swift Deep Dive #16](#swift-deep-dive-16)
+  - [The 5 Step Approach to Solve Any Programming Problem](#the-5-step-approach-to-solve-any-programming-problem)
+    - [The question: How to get our app to play sound?](#the-question-how-to-get-our-app-to-play-sound)
+  - [The 5 Step Approach to Debug our App:](#the-5-step-approach-to-debug-our-app)
+  - [Working With APIs](#working-with-apis)
+    - [API Networking](#api-networking)
+
 ## In Xcode you want to use the ViewController.swift
 
 - Unlike the **Main.storyboard** file (used for designing your app), the **ViewController.swift** file is used for swift development and implementing swift code.
@@ -585,6 +640,15 @@ if player1Username != nil{
 - Structures == Blueprints for objects in Swift where we can plan ahead of what it will be.  
   - Structures are composed of properties and methods:
     - **Properties** are variables created within the structure (What the structure will be like)
+      - **Computed Properties** are variables created by code you write within the variable.
+  
+      ```swift
+      <!-- Computed property syntax: -->
+      var computedProperty: dataType {
+        return someAction
+      }
+      ```
+
     - **Methods** are functions created within the structure (What the structure can do)
 
 ```swift
@@ -597,6 +661,18 @@ struct Town{
     let name = "Taylorland"
     var citizens = ["Taylor", "Carrie", "Em"]
     var resources = ["Grain": 100, "Ore": 42, "Wool": 75]
+    var population = 1000
+
+    // computed properties
+    var amountInReserve: String {
+      switch population
+      case 100...500:
+        return "need more people"
+      case 501...1500:
+        return "just about right"
+      case 1501...3000:
+        return "need to trim the fat"
+    }
 
     //defining methods (functions inside a structure)
     func fortify() {
@@ -624,7 +700,7 @@ struct Town{
     var name = String()
     var citizens = [String]()
     var resources = [String: Int]()
-    
+
     //init syntax for initializing the blueprint
     init(name: String, citizens: [String], resources: [String: Int]) {
         //self refers to the default properties
@@ -1018,6 +1094,463 @@ print(myOptional?.property) //--> Optional(123)
 myOptional?.method() //--> I am the struct's method
 ```
 
+## Swift Deep Dive #12 Protocols
+
+- Protocols are like certifications that have a bunch of requirements.  When methods, functs, structs, or classes meet the requirements, then they are allowed to use the protocols within their code.
+
+To learn more, check out Swift's documentation on protocols [here](https://docs.swift.org/swift-book/LanguageGuide/Protocols.html)
+
+```swift
+//Defining the protocol
+protocol MyProtocol {
+  // Define requirements
+}
+
+//Adopting a protocol
+struct MyStruct: MyProtocol{}
+class MyStruct: MyProtocol{}
+
+//Adopting Multiple Protocols
+struct MyStruct: FirstProtocol, AnotherProtocol {
+  // struct definition goes here
+}
+
+//With classes you must put the SuperClass first...
+class MyClass: SuperClass, FirstProtocol, AnotherProtocol {
+  // class definition goes here
+}
+
+// An example of a protocol
+
+//initializes the protocol and anything inside the protocol wil be the requirements
+protocol CanFly {
+  func fly()
+}
+
+// This struct will be the museum of all things that fly using the CanFly protocol
+struct FlyingMuseum {
+  func flyingDemo(flyingObject: CanFly) {
+    flyingObject.fly()
+  }
+}
+
+class Bird {
+  var isFemale = true
+
+  func layEgg() {
+    if isFemale {
+      print("The bird makes a new bird in a shell.")
+    }
+  }
+}
+
+class Eagle: Bird, CanFly {
+  func fly() {
+    print("The eagle flaps its wings and lifts off into the sky.")
+  }
+
+  func soar() {
+    print("The eagle glides in the air using air currents.")
+  }
+}
+
+class Penguin: Bird {
+  func swim() {
+    print("The penguin paddles through the water.")
+  }
+}
+
+struct Airplane: CanFly {
+  func fly() {
+    print("The airplane uses it engines to lift off into the sky.")
+  }
+}
+
+let museum = FlyingMuseum()
+let myEagle = Eagle()
+let myPenguin = Penguin()
+let myAirplane = Airplane()
+
+museum.flyingDemo(flyingObject: myEagle)//-> prints the fly statement
+museum.flyingDemo(flyingObject: myAirplane)//-> prints the fly statement
+museum.flyingDemo(flyingObject: myPenguin)//-> throws an error b/c Penguin class doesn't have the fly func.
+```
+
+## Swift Deep Dive #13 Closures
+
+- Closures are essentially anonymous functions or functions without names.  Closures are a self-contained package of functionality that we can pass around and use.
+
+```swift
+//closure syntax
+{ (parameter: parameterType) -> returnType in return output }
+
+//normal func with input and output
+func functionName(parameter: parameterType) -> returnType {
+  // Do something
+  return output
+}
+
+//How to pass a function as a parameter in swift
+                                // This parameter is a function
+func calculator (n1: Int, n2: Int, operation: (Int, Int) -> Int) -> Int {
+    return operation(n1, n2)
+}
+
+func add(no1: Int, no2: Int) -> Int {
+    return no1 + no2
+}
+
+func subtract(no1: Int, no2: Int) -> Int {
+    return no1 - no2
+}
+
+calculator(n1: 3, n2: 2, operation: add) //--> 5
+calculator(n1: 3, n2: 2, operation: subtract) //--> 1
+
+//Here is how we can use Closures to simplify the add code
+{ (no1: Int, no2: Int) -> Int in
+    return no1 + no2
+}
+//However we can simplify more:
+// We don't need the -> because Swift knows we are using two numbers, so it already knows to return something
+{ (no1: Int, no2: Int) in return no1 + no2 }
+
+//Simplified more:
+//We also don't need the return
+{ (no1: Int, no2: Int) in no1 + no2 }
+
+//Simplified more:
+//We also don't have to use no1 or no2 by using anonymous parameter names.
+//Anonymous parameters are labeled as $0, $1, $2, and so on.
+{ (no1: Int, no2: Int) in $0 + $1 }
+
+//now to call it
+let result = calculator(n1: 20, n2: 5, operation: { $0 + $1 })
+print(result)
+
+//However since swift has a rule that if a closure is the last parameter,
+//then they can omit the name parameter and become a trailing closure
+let result = calculator(n1: 20, n2: 5 ) { $0 + $1 }
+print(result)
+
+//A more real-world example:
+let array = [6,2,3,9,4,1]
+
+//func before turning into closure
+//func addOne(n1: Int) -> Int {
+//    return n1 + 1
+//}
+
+//maps through (for loops) each index of the array and adds one
+//using a closure
+print(array.map{$0 + 1})
+
+let newArray = array.map{"\($0)"}
+print(newArray)
+```
+
+- *NOTE* one advantage is the code become much more simplified.  However, there is the issue of readability, and there is a delicate balance of the two. 
+
+If you want to learn more about closures check out Swift's documentation [here](https://docs.swift.org/swift-book/LanguageGuide/Closures.html)
+
+## Swift Deep Dive #14 Parameter Names
+
+- Swift uses parameter names as way to name functions and their describe their functionality.  However, you can have internal and external parameter names.  Like so:
+
+```swift
+//defining a function with internal and external parameters
+func myFunc(name eman: dataType) {
+  print(eman)
+}
+
+//calling the function with internal and external parameters
+myFunc(name: dataValue)
+
+//if you want to call the function without the external name, then you would:
+func myFunc(_ eman: dataType) {
+  print(eman)
+}
+
+myfunc(dataValue)
+```
+
+## Swift Deep Dive #15 Extensions
+
+- Extensions allows the developer to extend the functionality of funcs, structs, classes, protocols etc.  Why do this?  So devs can add on to their apps.
+
+```swift
+// defining the extension
+extension SomeType {
+  //Add some extension
+}
+
+// here we will extend the round() functionality:
+import UIKit
+
+extension Double {
+    func round(to places: Int) -> Double {
+        let percisionNumber = pow(10, Double(places))
+        var n = self
+        n = n * percisionNumber
+        n.round()
+        n = n / percisionNumber
+        return n
+    }
+}
+
+var myDouble = 3.14159
+myDouble.round(to: 2) //--> 3.14
+
+// you can even extend UI elements.
+import UIKit
+
+extension UIButton {
+    func makeCircular() {
+        self.clipsToBounds = true
+        self.layer.cornerRadius = self.frame.size.width / 2
+    }
+}
+
+let button = UIButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+button.backgroundColor = .red
+button.makeCircular()
+
+// extending protocols
+extension SomeProtocol {
+  //Define default behavior
+}
+
+protocol CanFly {
+    func fly()
+}
+
+extension CanFly {
+    func fly() {
+        print("The object takes off into the air.")
+    }
+}
+
+struct Airplane: CanFly {
+  //you do not need to set the protocol b/c it was set as default.
+}
+
+let myAirplane = Airplane()
+myAirplane.fly()
+
+// extensions can also help with cleaning up code by adopting protocols
+// and separating protocols into sections within your code. 
+extension SomeType: SomeProtocol {
+  // Add new functionality
+}
+```
+
+## Swift Deep Dive #16
+
+- Loops are an important construct in general programming.  They loop through datatypes while doing some action.  In swift, there are a few different type of loops.
+
+1. For In Loops
+
+```swift
+//for in loops
+let names = ["Taylor", "Carrie", "Em", "Scout"]
+
+for name in names {
+  print("Hello,\(name)!")
+}
+// Hello, Taylor!
+// Hello, Carrie!
+// Hello, Em!
+// Hello, Scout!
+
+for number in 1...5 {
+  print(number)
+}
+//1
+//2
+//3
+//4
+//5
+
+// Just print the word Hello 5 times?
+for _ in 1...5 {
+  print("Hello")
+}
+
+let fruits: Array = ["apple", "pear", "orange"]
+//Set is like an array, but will not print in order like an array. Use set when you don't care about order and want efficentcy
+let fruitz: Set = ["apple", "pear", "orange"]
+let contacts = ["Adam": 1235678, "Clair": 8675309, "Josh": 4567890]
+let word = "supercalifragilisticexpialidocious"
+let halfOpenRange = 1..<5
+let closedRange = 1...5
+
+for fruit in fruits {
+    print(fruit)
+}
+//apple
+//pear
+//orange
+
+for fruit in fruitz {
+    print(fruit)
+}
+//pear
+//orange
+//apple
+
+for person in contacts {
+    print(person.key)
+    print(person.value)
+}
+//Adam
+//1235678
+//Josh
+//4567890
+//Clair
+//8675309
+
+for letter in word {
+    print(letter)
+}
+//s
+//u
+//p
+//e
+//r
+//c
+//a
+//l
+//i
+//f
+//r
+//a
+//g
+//i
+//l
+//i
+//s
+//t
+//i
+//c
+//e
+//x
+//p
+//i
+//a
+//l
+//i
+//d
+//o
+//c
+//i
+//o
+//u
+//s
+
+for num in halfOpenRange {
+    print(num)
+}
+//1
+//2
+//3
+//4
+
+for _ in closedRange {
+    print("Loop is running")
+}
+//Loop is running
+//Loop is running
+//Loop is running
+//Loop is running
+//Loop is running
+
+//using funcs in for in loops:
+func putCoin() {
+    print("Coin dropped.")
+}
+
+func move(direction: String, number: Int) {
+    print("Move \(direction) \(number) square.")
+}
+
+for _ in 1...5 {
+    putCoin()
+    move(direction: "Right", number: 1)
+}
+```
+
+2. While Loops - test the condition (true / false) a variable and will run until it his a false.
+  - **Remember** while loops can get caught in an infinite loop. 
+
+```swift
+while somethingIsTrue {
+  doSomething
+}
+
+var now = Date().timeIntervalSince1970
+let oneSecondFromNow = now + 1
+
+while now < oneSecondFromNow {
+    now = Date().timeIntervalSince1970
+    print("Waiting...")
+}
+
+//loops exercise: Fibonacci's number
+func fibonacci(n: Int) {
+    
+    var numArray: [Int] = [0, ]
+    
+    var num1 = 0
+    var num2 = 1
+    
+    
+    for _ in 0..<n-1 {
+        
+        let num = num1 + num2
+        num1 = num2
+        num2 = num
+        numArray.append(num1)
+    }
+    print(numArray)
+    print(num2)
+}
+
+fibnacci(n: 5)
+
+
+//more refined way 
+
+func fibonacci(n: Int) {
+  var fibArray: [Int] = []
+
+  var n1 = 0
+  var n2 = 1
+
+  if n == 0 {
+    print("Invalid")
+  } if else n == 1 {
+    fibArray.append(n1)
+    print(fibArray)
+  } if else n == 2 {
+    fibArray.append(n1)
+    fibArray.append(n2)
+    print(fibArray)
+  } else {
+    fibArray = [n1, n2]
+    for _ in 2..<n {
+      let result = n1 + n2
+      fibArray.append(result)
+      n1 = n2
+      n2 = result
+    }
+  }
+  print(fibArray)
+}
+```
+
+-  To learn more check out the Swift book [here](https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html)
+
+
 ## The 5 Step Approach to Solve Any Programming Problem
 
   1. Google
@@ -1058,3 +1591,24 @@ myOptional?.method() //--> I am the struct's method
 4. How can we test the things our expectations depend on?
 5. Fix our code to match expectations.
 
+## Working With APIs
+
+- What is an API (Application Programming Interface)?
+  - An API is a set of commands, functions, protocols, and objects that programmers can use to **create software** or **interact with an external system**.
+  - It provides developers with **standard commands** for performing **common operations** so they do not have to write the code from scratch.
+- Examples of APIs
+  - APIs to Create Software
+    - Apple Developer Classes such as AVAudioPlayer through the Apple documentation.
+  - APIs to Interact with an External System
+    - When you log into an app and it asks if you want to login with Facebook and then populates information from Facebook.
+- APIs are kind of like contracts between your app and the API Provider.
+  - For example: in our weather app, us and OpenWeather enter into an API contract; we promise to abide by the rules Open and use the methods and functionality appropriately, and OpenWeather promises to keep their protocols and delegates the same so it doesn't crash our app.
+
+### API Networking
+
+- Networking is when your app is talking to a web server with queries you've asked the webserver, the webserver then sends you data back in the form of JSON.
+- Networking steps:
+  - Step 1: Create the URL
+  - Step 2: Create the URLSession
+  - Step 3: Give URLSession a task
+  - Step 4: Start the task
