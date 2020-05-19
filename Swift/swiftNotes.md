@@ -11,49 +11,9 @@
   - [Swift Deep Dive #2](#swift-deep-dive-2)
     - [Variables](#variables)
     - [Constants](#constants)
-  - [Swift Deep Dive #3](#swift-deep-dive-3)
-    - [Arrays](#arrays)
-    - [1D Arrays vs 2D Arrays](#1d-arrays-vs-2d-arrays)
-  - [Swift Deep Dive #4](#swift-deep-dive-4)
-    - [Basic Data Types](#basic-data-types)
-    - [Randomization in Swift](#randomization-in-swift)
-    - [Range Operator](#range-operator)
-  - [Deep Dive #5 Functions and Scope](#deep-dive-5-functions-and-scope)
-    - [Functions](#functions)
-    - [Scope](#scope)
-    - [Functions with Inputs](#functions-with-inputs)
-    - [Functions with Outputs](#functions-with-outputs)
-      - [3 Types of Functions](#3-types-of-functions)
-    - [Creating DataTypes](#creating-datatypes)
-    - [Type Inference](#type-inference)
-    - [How to Find the DataType of a Variable?](#how-to-find-the-datatype-of-a-variable)
-  - [Deep Dive #6 Conditionals](#deep-dive-6-conditionals)
-    - [If / Else Statments](#if--else-statments)
-      - [Comparison Operators](#comparison-operators)
-      - [Logical Operators](#logical-operators)
-    - [Switch Statements](#switch-statements)
-      - [When to use a Switch Statement or If/Else Statement?](#when-to-use-a-switch-statement-or-ifelse-statement)
-  - [Deep Dive #7 Dictionaries](#deep-dive-7-dictionaries)
-  - [Deep Dive #8 Optionals](#deep-dive-8-optionals)
-    - [Structures, Methods, and Properties](#structures-methods-and-properties)
-      - [But what if we needed a custom data type?](#but-what-if-we-needed-a-custom-data-type)
-  - [Deep Dive #9 Immutability](#deep-dive-9-immutability)
-  - [Deep Dive #10 Classes](#deep-dive-10-classes)
-    - [Inheritance in UIKit](#inheritance-in-uikit)
-    - [Differences between Classes and Structs](#differences-between-classes-and-structs)
-    - [Choosing Between Structs and Classes](#choosing-between-structs-and-classes)
-  - [Deep Dive #11 Optional Binding, Chaining, and the Nil Coalescing Operator](#deep-dive-11-optional-binding-chaining-and-the-nil-coalescing-operator)
-    - [Using Optionals ?](#using-optionals-)
-  - [Swift Deep Dive #12 Protocols](#swift-deep-dive-12-protocols)
-  - [Swift Deep Dive #13 Closures](#swift-deep-dive-13-closures)
-  - [Swift Deep Dive #14 Parameter Names](#swift-deep-dive-14-parameter-names)
-  - [Swift Deep Dive #15 Extensions](#swift-deep-dive-15-extensions)
-  - [Swift Deep Dive #16](#swift-deep-dive-16)
-  - [The 5 Step Approach to Solve Any Programming Problem](#the-5-step-approach-to-solve-any-programming-problem)
-    - [The question: How to get our app to play sound?](#the-question-how-to-get-our-app-to-play-sound)
-  - [The 5 Step Approach to Debug our App:](#the-5-step-approach-to-debug-our-app)
-  - [Working With APIs](#working-with-apis)
-    - [API Networking](#api-networking)
+    - [Lazy Variables](#lazy-variables)
+  - [Sandboxing](#sandboxing)
+  - [DataBases](#databases)
 
 ## In Xcode you want to use the ViewController.swift
 
@@ -166,6 +126,21 @@ myName = "T.P."
 print("myName")
 //outputs --> Swift throws an error saying that it cannot be mutated.
 ```
+
+### Lazy Variables
+
+- Lazy variables are variables that will only be loaded up when the program needs them or when they are called upon which helps with memory. This example is from CoreData
+
+```swift
+lazy var persistentContainer: NSPersistentContainer = {
+  let container = NSPersistentContainer(name: "DataModel")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+}()
 
 ## Swift Deep Dive #3
 
@@ -1546,10 +1521,155 @@ func fibonacci(n: Int) {
   }
   print(fibArray)
 }
+
+//for loop showing how to make text look like it is typing
+titleLabel.text = ""
+        var charIndex = 0.0
+        let titleText = "⚡️FlashChat"
+        for letter in titleText {
+            print("---")
+            print(0.1 * charIndex)
+            print(letter)
+            Timer.scheduledTimer(withTimeInterval: 0.1 * charIndex, repeats: false) { (timer) in
+                self.titleLabel.text?.append(letter)
+            }
+            charIndex += 1
+        }
 ```
 
 -  To learn more check out the Swift book [here](https://docs.swift.org/swift-book/LanguageGuide/ControlFlow.html)
 
+## Swift Deep Dive #17 Type Casting
+
+- Type casting is when you cast a different data type from the one a variable was created in.  Such as:
+
+```swift
+let myDouble = 0.0
+let myDoubleAsAnInt = Int(myDouble)
+```
+
+- However, there is more with type casting using the following keywords:
+
+```swift
+//Example
+import Foundation
+
+class Animal {
+    var name: String
+    
+    init(n: String) {
+        name = n
+    }
+}
+
+class Human: Animal {
+    func code() {
+        print("Typing away...")
+    }
+}
+
+class Fish: Animal {
+    func breatheUnderWater() {
+        print("Breathing under water.")
+    }
+}
+
+let taylor = Human(n: "Taylor")
+let carrie = Human(n: "Carrie")
+let nemo = Fish(n: "Nemo")
+
+let neighbors = [taylor, carrie, nemo]
+```
+
+1. is - allows us to check to see if that the keyword used is of the dataType (conditional).  Also called, **Type Checking!**
+
+```swift
+func findNemo(from animals: [Animal]) {
+    for animal in animals {
+        //checks which animal in the array IS a fish.
+        if animal is Fish {
+            print(animal.name)
+        }
+    }
+}
+
+findNemo(from: neighbors)
+//--> Nemo
+```
+
+2. as! - Turns a SuperClass into a SubClass (pretty cool, right!?) Also called, **Forced Downcast!** Check it out:
+
+```swift
+func findNemo(from animals: [Animal]) {
+    for animal in animals {
+        if animal is Fish {
+            print(animal.name)
+            //B/C animal is of the dataType Animal (class) it cannot take on
+            //the functionality of fish, even though Fish is a subclass.  
+            //Instead we have to type cast animal to Fish using as! to gain
+            //access to it's full functionality. 
+            let fish = animal as! Fish
+            fish.breatheUnderWater()
+        }
+    }
+}
+
+findNemo(from: neighbors)
+//--> Nemo
+//--> Breathing under water.
+```
+
+**NOTE** - Forced downcasting can be dangerous if you mix dataTypes and will make your app fail at runtime because of it.  A better way is to check the dataType using as?.
+
+3. as? checks to see if dataTypes match and if not will crash the app at run time.  Usually seen with if let statements.  
+  
+```swift
+if let fish = neighbors[1] as? Fish {
+    fish.breatheUnderWater()
+} else {
+    print("Sorry, that is incorrect.")
+}
+```
+
+4. as - raises an Object from a SubClass to a SuperClass.  Also called, **Up Casting**
+
+```swift
+func findNemo(from animals: [Animal]) {
+    for animal in animals {
+        if animal is Fish {
+            print(animal.name)
+            let fish = animal as! Fish
+            fish.breatheUnderWater()
+            let animalFish = fish as Animal
+            print(animalFish.name)
+        }
+    }
+}
+
+findNemo(from: neighbors)
+```
+
+### Weird Type Casting Data Types
+
+- Any - Can be **All Objects**
+
+Example:
+  
+  ```swift
+  let neighbors: [Any] = [taylor, carrie, nemo, 4]
+  ```
+
+  - AnyObjects - Objects derived from classes **not** structs
+    - NSObjects - Foundation objects
+      - NSString
+      - NSNumber
+      - NSData
+      - NSDate
+      - JSONSerialization
+      - DataFormalizer
+      - FileManager
+
+- To check out more, read this from the Swift documentation [here](https://docs.swift.org/swift-book/LanguageGuide/TypeCasting.html)
 
 ## The 5 Step Approach to Solve Any Programming Problem
 
@@ -1612,3 +1732,182 @@ func fibonacci(n: Int) {
   - Step 2: Create the URLSession
   - Step 3: Give URLSession a task
   - Step 4: Start the task
+
+## UITableView
+
+- One of the most used Views in iOS development and a must have for iOS devs.
+- It is a view that is made up of a table and prototype cells that have data in each one of them.  iMessage or the Mail app uses these. 
+
+
+## ViewController Lifecycle Explained
+
+- Much like life on this planet, everything must die...(wow, dramatic much?), the ViewController also has a life cycle. Here is it's lifecycle explained.
+
+1. The view get loaded up! (It's alive!) ```viewDidLoad()```
+   1. All of the IBOutlets and actions are connected up and accessible.  
+      1. **NOTE** ```viewDidLoad()``` will only be ran 1 when the view is loaded.
+2. ```viewWillAppear()``` is loaded next
+   1. This is where the developer can start to load objects for the user to see.
+3. ```viewDidAppear()``` is loaded next
+   1. This is where the code that was loaded in ```viewDidAppear()``` will become visible to the user and detect.
+4. ```viewWillDisappear()``` is this wear you want to load objects you want hidden from the user like a task bar or whatnot.
+5. ```viewDidDisappear()``` is where the objects you wanted to hid from the user are hidden.  Last moment where the dev can manipulate objects. Although objects are hidden, it doesn't mean the View is dead or decollated.
+
+## Application Lifecycle Explained
+
+1. App Launch
+2. App Visible
+3. App Recedes into Background
+4. Resources Reclaimed...death
+
+- This last part is very important to understand iOS development. Remember, resources (memory, cpu time, etc.) are limited within iOS, and the cpu is always trying to find ways to reclaim resources to make the best user experience for the user. 
+- Now, the cpu allocates a majority of the resources to the app that is running on the foreground because that is what the user is interacting with at the time.  
+- So, if your app (maybe a game or has a long survey) gets push to the back, and it hasn't save the users data then that data will be reclaimed and lost.
+- When's the best time to save your user's data? Well, when you app leaves the forground-active state is the best time to do so.
+
+## User Defaults
+
+- User defaults are a way to store data that is unique to the user such as a name, music on or off, or even arrays and dictionaries. Here are some examples:
+
+```swift
+import UIKit
+
+// initializes defaults as the variable for User options.
+let defaults = UserDefaults.standard
+
+// A good idea is to create a constant for each of your default keys
+let dictionaryKey = "MyDictionary"
+// here are some examples of user defaults
+
+// sets the user volue to a float when opening the application
+defaults.set(0.24, forKey: "Volume")
+
+// sets the volue to begin when the user opens the application
+defaults.set(true, forKey: "MusicOn")
+
+// set player's name
+defaults.set("Taylor", forKey: "PlayerName")
+
+// gather data on the user
+defaults.set(Date(), forKey: "AppLastOpenedByUser")
+
+// saving collection with defaults
+
+// arrays
+let array = [1,2,3]
+defaults.set(array, forKey: "MyArray")
+
+// dictionaries
+let dictionary = ["name": "Taylor"]
+defaults.set(dictionary, forKey: dictionaryKey)
+    
+
+
+let volume = defaults.float(forKey: "Volume")
+let music = defaults.bool(forKey: "MusicOn")
+let name = defaults.string(forKey: "PlayerName")
+let lastDateOpened = defaults.object(forKey: "AppLastOpenedByUser")
+let myArray = defaults.array(forKey: "MyArray") as! [Int]
+let myDict = defaults.dictionary(forKey: dictionaryKey)
+```
+
+- 2 things to remember:
+  - a: User defaults should only be used for storing tiny pieces of data such as flipping the music on or off.  They should **NOT** be used for full fledge database because all of the user defaults must be ran and stored in a pList file which if there was a large array or dictionary the app would take a performance hit to retrieve the data.
+  - b: User Defaults are special creatures that can be used as a make shift database for user options.  For this reason they are called Singleton objects.  Learn more 👇.
+
+## Singleton Objects
+
+- Is an object that will only be copied once and shared across all of objects of your app.  Examples are:
+
+```swift
+let defaults = UserDefaults.standard
+let sharedURLSession = URLSession.shared
+```
+
+- Here is an example of a class acting normal:
+
+```swift
+import UIKit
+
+class Car {
+    
+    var color = "Red"
+    
+}
+
+let myCar = Car()
+myCar.color = "Blue"
+
+let yourCar = Car()
+
+print(myCar.color) //--> Blue
+print(yourCar.color) //--> Red
+```
+
+- Here is an example of Singletons in a class:
+
+```swift
+import UIKit
+
+class Car {
+    
+    var color = "Red"
+    
+    static let singletonCar = Car()
+}
+
+let myCar = Car.singletonCar
+myCar.color = "Blue"
+
+let yourCar = Car.singletonCar
+
+print(myCar.color) //--> Blue
+print(yourCar.color) //--> Blue
+
+class A {
+    init() {
+        Car.singletonCar.color = "Brown"
+    }
+}
+
+class B {
+    init() {
+        print(Car.singletonCar.color)
+    }
+}
+
+let a = A()
+let b = B() //--> Brown
+```
+
+## Swift Ternary Operator
+
+- Ternary operator is an operator that checks if a value is true or false:  essentially a conditional statement in an operator. Example syntax:
+
+```value = condition ? valueIfTrue : valueIfFalse```
+
+```swift
+cell.acessoryType = items.done ? .checkmark : .none
+```
+
+## Sandboxing
+
+- All of your apps live in a sandbox (or prison) on your phone.
+- Each sandbox can hold folders that are associated with the apps.
+- Which means that the folders on one app do not mess with the folders on another app...think weather app getting data from your BOA app (ouch!).
+- Now, when your phone connects to iCloud or iTunes (locally on your laptop), it syncs to the documents folder which is a backup to your app's data safely.  This is important because you don't loose the data from your apps when you get a new phone or update the OS.
+
+## DataBases
+
+- Different types of data bases, tables(UserDefaults, Codable, KeyChain) and DatabaseSolutions(SQLite, Core Data, Realm).
+
+| Method | Use |
+|:--:|:--:|
+| UserDefaults | Quickly persist small bits of data e.g. top score, playerNickname, music on/off |
+| Codable | Flash freeze custom objects |
+| Keychain API | Save small bits of data securely |
+| SQLite | Persist large amounts of daa and query it |
+| Core Data | Object-oriented database |
+| Realm | A faster and easier database solution |
+
+- Checkout DataBase notes.
